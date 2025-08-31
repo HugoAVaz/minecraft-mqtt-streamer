@@ -10,8 +10,8 @@ if %errorlevel% neq 0 (
     echo.
     echo Error: Failed to build plugin
     echo.
-    echo Alternative: Install Java 17 and Maven locally
-    echo 1. Download Java 17 from: https://adoptium.net/
+    echo Alternative: Install Java 21 and Maven locally
+    echo 1. Download Java 21 from: https://adoptium.net/
     echo 2. Download Maven from: https://maven.apache.org/download.cgi
     echo.
     pause

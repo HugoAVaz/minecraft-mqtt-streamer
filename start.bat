@@ -20,6 +20,10 @@ echo Environment started successfully!
 echo.
 echo Minecraft Server: localhost:25565
 echo MQTT Broker: localhost:1883
+echo Web Dashboard: http://localhost:8080
+echo.
+echo Opening web dashboard...
+start http://localhost:8080
 echo.
 echo To view logs: docker compose logs -f
 echo To stop: docker compose down

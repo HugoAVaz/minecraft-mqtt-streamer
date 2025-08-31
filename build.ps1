@@ -11,8 +11,8 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host ""
     Write-Host "Error: Failed to build plugin" -ForegroundColor Red
     Write-Host ""
-    Write-Host "Alternative: Install Java 17 and Maven locally" -ForegroundColor Yellow
-    Write-Host "1. Download Java 17 from: https://adoptium.net/" -ForegroundColor White
+    Write-Host "Alternative: Install Java 21 and Maven locally" -ForegroundColor Yellow
+    Write-Host "1. Download Java 21 from: https://adoptium.net/" -ForegroundColor White
     Write-Host "2. Download Maven from: https://maven.apache.org/download.cgi" -ForegroundColor White
     Write-Host ""
     Read-Host "Press Enter to continue"

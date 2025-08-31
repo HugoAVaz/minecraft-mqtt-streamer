@@ -4,11 +4,82 @@
 
 The Minecraft MQTT Streamer is a Bukkit plugin that streams in-game events from a Minecraft server to an MQTT broker. It is designed to follow the Unified Namespace (UNS) architecture, providing a structured and scalable way to monitor server and player activities in real-time. This plugin captures a wide range of events, including player actions, enemy engagements, and world changes, and publishes them to specific MQTT topics.
 
-In addition to the plugin, this project also includes a collection of Coreflux LOT Notebook files (`main.lotnb` and `event_counters.lotnb`) that define a status model for processing the raw event data. When loaded into a LOT-compatible MQTT broker, these notebooks create a real-time view of the server's state by aggregating events into a series of status counters.
+In addition to the plugin, this project also includes a collection of Coreflux LOT Notebook files that define a status model for processing the raw event data. When loaded into a LOT-compatible MQTT broker, these notebooks create a real-time view of the server's state by aggregating events into a series of status counters.
 
-## About Coreflux
+## Getting Started
 
-This project is built on the [Coreflux](https://coreflux.org) IoT platform, which provides the MQTT broker, data processing capabilities, and development tools used in this solution. Coreflux is designed for real-time data management and automation. For more details, check out the official [Coreflux Documentation](https://docs.coreflux.org).
+This guide will walk you through setting up the development environment, which includes the Minecraft server, MQTT broker, and the web dashboard.
+
+### Prerequisites
+
+-   **Docker and Docker Compose**: Essential for running the entire environment.
+-   **Minecraft Java Edition Client**: Version 1.21 or later to connect to the server.
+-   **(Optional) Java 21 and Maven**: If you prefer to build the plugin locally without Docker.
+
+### Build and Run
+
+Convenient scripts are provided to build the plugin and start the environment.
+
+#### For Windows Users:
+
+1.  **Build the plugin**:
+    ```shell
+    .\build.bat
+    ```
+    This script uses Docker to compile the Java plugin. The resulting `.jar` file is automatically copied to the `plugins` directory.
+
+2.  **Start the services**:
+    ```shell
+    .\start.bat
+    ```
+    This command starts the Minecraft server, Coreflux MQTT broker, and the web dashboard using `docker-compose`.
+
+3.  **Stop the services**:
+    ```shell
+    .\close.bat
+    ```
+    This command gracefully stops all the running services.
+
+#### For Linux and macOS Users:
+
+1.  **Build the plugin**:
+    ```shell
+    chmod +x build.sh
+    ./build.sh
+    ```
+    This script uses Docker to compile the Java plugin. The resulting `.jar` file is automatically copied to the `plugins` directory.
+
+2.  **Start the services**:
+    ```shell
+    chmod +x start.sh
+    ./start.sh
+    ```
+    This command starts the Minecraft server, Coreflux MQTT broker, and the web dashboard using `docker-compose`.
+
+3.  **Stop the services**:
+    ```shell
+    chmod +x close.sh
+    ./close.sh
+    ```
+    This command gracefully stops all the running services.
+
+### Accessing the Services
+
+Once the services are running, you can connect to them:
+
+-   **Minecraft Server**: Open your Minecraft client and connect to `localhost:25565`.
+-   **Web Dashboard**: The `start` script will attempt to open the web dashboard automatically in your default browser at `http://localhost:8080`. If it doesn't open, you can navigate to the URL manually.
+-   **MQTT Broker**: You can connect to the broker at `localhost:1883` with a client like [MQTT Explorer](http://mqtt-explorer.com/) or any other MQTT client. Use the following credentials:
+    -   **Username**: `root`
+    -   **Password**: `coreflux`
+    
+    Subscribe to the topic `server/#` to see all the real-time events.
+
+## How it Works
+
+This GIF demonstrates the real-time interaction between Minecraft and an MQTT client. As events happen in the game, they are instantly published to the MQTT broker, where they can be monitored.
+
+![How it Works](minecraft-mqtt-stream.gif)
 
 ## System Components
 
@@ -18,16 +89,6 @@ This solution is composed of four main components working together:
 2.  **Coreflux MQTT Broker**: A high-performance MQTT broker that acts as the central messaging hub. It receives events from the Minecraft plugin and routes them to subscribers like the web dashboard. It can also execute LOT (Language of Things) code for real-time data processing. The broker is included in the `docker-compose.yml` file for easy setup.
 3.  **Web Dashboard**: A web-based interface for real-time monitoring and interaction with the Minecraft server via MQTT. It provides a comprehensive view of the server's status, players, devices, and more.
 4.  **LOT Notebooks**: Interactive documents containing LOT code. They process the raw event data from the plugin to generate aggregated status information (e.g., counters for player actions) and enable further automation.
-
-## Prerequisites
-
-Before you begin, ensure you have the following tools installed:
-
-- **Docker and Docker Compose**: Used to build the plugin and run the development environment, including the Minecraft server and Coreflux MQTT broker.
-- **Visual Studio Code**: The recommended code editor for working with this project.
-- **VS Code Extensions**:
-  - **LOT Notebooks by Coreflux**: For creating and managing `.lotnb` notebook files. 
-  - **LOT Language Support by Coreflux**: For syntax highlighting and language support for `.lotnb` script files.
 
 ## Features
 
@@ -53,42 +114,27 @@ The included web dashboard provides a real-time window into your Minecraft serve
 -   **Console**: A remote console that allows you to execute any command on the Minecraft server directly from the web interface.
 -   **Chat**: A real-time view of the in-game chat, with the ability to send messages to all players from the dashboard.
 
-## LOT Notebooks
+## Expanding Automation with LOT Notebooks
 
-The LOT Notebooks are a key component of this project, as they transform the raw event stream into a structured and aggregated status model. They provide an interactive, Jupyter-like development experience for the Language of Things (LOT), allowing you to create complete "System as Code" documents that combine both documentation and executable code in a single file.
-
-By processing raw events like a player crafting an item (`.../events/craft`), the notebooks can generate new, aggregated data streams, such as a counter for crafted items (`.../status/craft/counter`). This enriched data is then used by the web dashboard to display player statistics. This demonstrates how LOT Notebooks can expand the system's capabilities, enabling powerful automation and generating new insights from the raw event data.
+To go further and customize the data processing and automation, you can use LOT Notebooks.
 
 ### What are LOT Notebooks?
-LOT Notebooks (`.lotnb` files) are interactive documents that contain:
+LOT Notebooks are interactive documents (`.lotnb` files) that allow you to write and execute LOT (Language of Things) code directly against the MQTT broker. They are a key component for transforming the raw event stream into a structured and aggregated status model.
 
-- **Markdown cells**: For documentation, explanations, diagrams, and context.
-- **LOT code cells**: For executable LOT definitions (Models, Rules, Actions, Routes).
+By processing raw events (e.g., `.../events/craft`), the notebooks can generate new, aggregated data streams (e.g., `.../status/craft/counter`). This enriched data is what the web dashboard uses to display player statistics. This demonstrates how LOT Notebooks can expand the system's capabilities, enabling powerful automation and generating new insights from the raw event data.
 
-This "System as Code" approach combines clear explanations of your system's architecture and logic with the actual code that gets deployed to your MQTT broker.
+### Setting up the Environment
+To work with LOT Notebooks, you need to set up your VS Code environment:
 
-### Setting up the LOT Notebook Environment
-
-To get started with LOT Notebooks, you first need to set up your VS Code environment:
-
-1.  **Install the Extensions**:
-    -   Open Visual Studio Code.
-    -   Go to the Extensions view (Ctrl+Shift+X or Cmd+Shift+X).
-    -   Search for and install both of the following extensions:
+1.  **Install Visual Studio Code**.
+2.  **Install the Extensions**:
         -   `LOT Notebooks by Coreflux`
         -   `LOT Language Support by Coreflux`
-2.  **Configure Your MQTT Broker Connection**:
-    -   Open the Command Palette (Ctrl+Shift+P or Cmd+Shift+P).
-    -   Type "LOT Notebook: Change Credentials" and select it.
-    -   Enter your broker details. If you are using the `docker-compose.yml` file included in this project, the details are:
-        -   **URL**: `mqtt://localhost:1883`
-        -   **Username**: `root`
-        -   **Password**: `coreflux`
+3.  **Configure Your MQTT Broker Connection**:
+    -   Open the Command Palette (Ctrl+Shift+P) and run `LOT Notebook: Change Credentials`.
+    -   Enter your broker details (URL: `mqtt://localhost:1883`, User: `root`, Pass: `coreflux`).
 
-### Deploying the Status Model with LOT Notebooks
+After setup, you can open `main.lotnb` and execute the code cells to deploy the status model to the broker.
 
-After setting up your environment, you can deploy the status model to the MQTT broker directly from the notebook files:
-
-1.  **Open `main.lotnb` in VS Code**.
-2.  **Execute the code cells**: Run each code cell in the notebook. The extension will automatically upload the LOT definitions (like `INCLUDE "event_counters.lotnb"` and the `DEFINE ACTION` blocks) to the connected broker.
-3.  **Subscribe to Status Topics**: Once the notebooks are loaded, the broker will begin processing events from the Minecraft plugin and publishing the aggregated data to the status topics (e.g., `server/players/magui10/status/craft/counter`). You can then subscribe to these topics using an MQTT client to receive real-time updates.
+## About Coreflux
+This project is built on the [Coreflux](https://coreflux.org) platform, which provides the MQTT broker, data processing capabilities, and development tools used in this solution. For more details, check out the official [Coreflux Documentation](https://docs.coreflux.org).
