@@ -7,7 +7,7 @@
   {
     "kind": 1,
     "language": "markdown",
-    "value": "Below is an example of one of the original status models that inspired the creation of the `event_counters.lotnb` notebook. This action listens for player respawn events and increments a counter each time a player respawns. This same pattern is now applied to all other events in the included notebook."
+    "value": "Below is an example of one of the original status models that inspired the creation of the `event_counters.lotnb` notebook. This action listens for player respawn events and increments a counter each time a player respawns. This same pattern is now applied to all other events in the included notebook.\r\n\r\n[Event Counters Notebook](event_counters.lotnb)\r\n"
   },
   {
     "kind": 2,
