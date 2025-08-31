@@ -1,0 +1,16 @@
+name: MinecraftMQTTStreamer
+version: '1.0.0'
+main: com.coreflux.mqtt.MinecraftMQTTStreamer
+api-version: '1.21'
+authors: [Coreflux]
+description: Streams Minecraft events to MQTT broker
+website: https://coreflux.org
+commands:
+  mqtt:
+    description: MQTT Streamer commands
+    usage: /<command> [reload|status|test]
+    permission: mqtt.admin
+permissions:
+  mqtt.admin:
+    description: Allows access to MQTT admin commands
+    default: op

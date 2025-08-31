@@ -1,0 +1,17 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# Minecraft MQTT Streamer\r\n\r\n![Minecraft Coreflux Header](main.png)\r\n\r\nThis LOT Notebook collection defines the status model for the Minecraft MQTT Streamer, providing real-time insights into server and player activities. The status model is built upon the Unified Namespace (UNS) architecture, where raw events from the game are processed by a LOT-compatible MQTT broker to generate aggregated status information.\r\n\r\n## Overview\r\n\r\nThe primary goal of this status model is to create a comprehensive and real-time view of what is happening on the Minecraft server. This is achieved by capturing various in-game events, such as players crafting items, enemies taking damage, or furnaces smelting ore, and then using these events to update a set of status counters. These counters provide a high-level overview of the server's state and can be easily consumed by other applications, such as dashboards or monitoring tools.\r\n\r\nThis notebook, `main.lotnb`, serves as the main entry point for the status model. It includes the `event_counters.lotnb` notebook, which contains the core logic for counting events.\r\n\r\n"
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "Below is an example of one of the original status models that inspired the creation of the `event_counters.lotnb` notebook. This action listens for player respawn events and increments a counter each time a player respawns. This same pattern is now applied to all other events in the included notebook."
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION PlayerRespawn\r\nON TOPIC \"server/players/+/events/respawn\" DO\r\n    IF(GET TOPIC \"server/players/+/status/respawn/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/players/+/status/respawn/counter\" WITH 0\r\n    ELSE\r\n         PUBLISH TOPIC \"server/players/+/status/respawn/counter\" WITH (GET TOPIC \"server/players/+/status/respawn/counter\" +1)"
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# Player Event Counters\n\nThis notebook defines a series of actions that listen to player-related events from the Minecraft MQTT Streamer and update corresponding status counters. Each action increments a counter for a specific event, such as crafting, building, or receiving damage, providing a real-time overview of player activities on the server.\n\nThese counters follow the Unified Namespace (UNS) convention, with event topics triggering updates to corresponding status topics. For example, an event on `server/players/+/events/craft` will increment the counter on `server/players/+/status/craft/counter`.\n\nTo use these counters, ensure that this notebook is loaded into a LOT-compatible MQTT broker that is subscribed to the event topics published by the Minecraft plugin."
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION PlayerCraftCounter\r\nON TOPIC \"server/players/+/events/craft\" DO\r\n    IF(GET TOPIC \"server/players/+/status/craft/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/players/+/status/craft/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/players/+/status/craft/counter\" WITH (GET TOPIC \"server/players/+/status/craft/counter\" + 1)"
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION PlayerBuildCounter\r\nON TOPIC \"server/players/+/events/build\" DO\r\n    IF(GET TOPIC \"server/players/+/status/build/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/players/+/status/build/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/players/+/status/build/counter\" WITH (GET TOPIC \"server/players/+/status/build/counter\" + 1)"
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION PlayerMineCounter\r\nON TOPIC \"server/players/+/events/mine\" DO\r\n    IF(GET TOPIC \"server/players/+/status/mine/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/players/+/status/mine/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/players/+/status/mine/counter\" WITH (GET TOPIC \"server/players/+/status/mine/counter\" + 1)"
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION PlayerDiedCounter\r\nON TOPIC \"server/players/+/events/died\" DO\r\n    IF(GET TOPIC \"server/players/+/status/died/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/players/+/status/died/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/players/+/status/died/counter\" WITH (GET TOPIC \"server/players/+/status/died/counter\" + 1)"
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION PlayerEatCounter\r\nON TOPIC \"server/players/+/events/eat\" DO\r\n    IF(GET TOPIC \"server/players/+/status/eat/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/players/+/status/eat/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/players/+/status/eat/counter\" WITH (GET TOPIC \"server/players/+/status/eat/counter\" + 1)  "
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION PlayerDamageCounter\r\nON TOPIC \"server/players/+/events/damage\" DO\r\n    IF(GET TOPIC \"server/players/+/status/damage/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/players/+/status/damage/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/players/+/status/damage/counter\" WITH (GET TOPIC \"server/players/+/status/damage/counter\" + 1)"
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "# Enemy Event Counters\n\nThis section of the notebook is dedicated to tracking enemy-related events. The actions defined here listen for events such as enemy damage and death, and they update corresponding status counters. This allows for real-time monitoring of combat-related activities on the server.\n\nLike the player event counters, these actions also adhere to the Unified Namespace (UNS) convention. Events published on topics like `server/enemies/+/+/events/damage` will trigger updates on status topics such as `server/enemies/+/+/status/damage/counter`."
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION EnemyDamageCounter\r\nON TOPIC \"server/enemies/+/+/events/damage\" DO\r\n    IF(GET TOPIC \"server/enemies/+/+/status/damage/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/enemies/+/+/status/damage/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/enemies/+/+/status/damage/counter\" WITH (GET TOPIC \"server/enemies/+/+/status/damage/counter\" + 1)"
+  },
+  {
+    "kind": 2,
+    "language": "lot",
+    "value": "DEFINE ACTION EnemyDeathCounter\r\nON TOPIC \"server/enemies/+/+/events/death\" DO\r\n    IF(GET TOPIC \"server/enemies/+/+/status/death/counter\" EQUAL EMPTY) THEN\r\n        PUBLISH TOPIC \"server/enemies/+/+/status/death/counter\" WITH 1\r\n    ELSE\r\n        PUBLISH TOPIC \"server/enemies/+/+/status/death/counter\" WITH (GET TOPIC \"server/enemies/+/+/status/death/counter\" + 1)"
+  }
+]

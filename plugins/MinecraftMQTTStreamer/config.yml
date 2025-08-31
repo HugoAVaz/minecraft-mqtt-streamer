@@ -1,0 +1,75 @@
+# Minecraft MQTT Streamer UNS Configuration
+
+mqtt:
+  broker:
+    uri: "tcp://coreflux-mqtt:1883"
+    username: "root"
+    password: "coreflux"
+    client-id: "minecraft-streamer"
+    keep-alive: 60
+    connection-timeout: 30
+    automatic-reconnect: true
+  
+  qos: 1
+  retain: false
+
+  # Unified Namespace (UNS) Topic Templates
+  # Placeholders: {world}, {playerName}, {deviceType}, {deviceId}, {blockType}
+  topics:
+    base: "server"
+    
+    world:
+      time: "{base}/world/time"
+      weather: "{base}/world/weather"
+
+    players:
+      base: "{base}/players/{playerName}/events"
+      craft: "{players.base}/craft"
+      build: "{players.base}/build"
+      mine: "{players.base}/mine"
+      died: "{players.base}/died"
+      respawn: "{players.base}/respawn"
+      # Future additions: fight, healthloss, kill, trade
+      
+    devices:
+      base: "{base}/devices/{deviceType}/{deviceId}/events"
+      furnace_burn: "{devices.base}/burn"
+      furnace_smelt: "{devices.base}/smelt"
+      furnace_extract: "{devices.base}/extract"
+      crafting_station_new: "{devices.base}/new"
+      crafting_station_craft: "{devices.base}/craft"
+      
+    special_blocks:
+      base: "{base}/specialblocks/{blockType}/{blockId}/events"
+      tnt_explosion: "{special_blocks.base}/explosion"
+
+events:
+  time:
+    enabled: true
+    interval: 15
+  
+  weather:
+    enabled: true
+
+  players:
+    enabled: true
+    # Fine-grained control for player events
+    craft: true
+    build: true
+    mine: true
+    died: true
+    respawn: true
+  
+  devices:
+    enabled: true
+    furnace: true
+    crafting_station: true
+
+  special_blocks:
+    enabled: true
+    tnt: true
+
+logging:
+  level: "INFO"
+  mqtt-debug: false
+  event-debug: false

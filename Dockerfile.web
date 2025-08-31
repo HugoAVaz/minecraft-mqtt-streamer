@@ -1,0 +1,6 @@
+# Use an official httpd image
+FROM httpd:2.4
+
+# Copy the website files to the Apache document root
+COPY ./web/ /usr/local/apache2/htdocs/
+COPY ./main.png /usr/local/apache2/htdocs/main.png

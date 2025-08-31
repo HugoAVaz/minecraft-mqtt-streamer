@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coreflux Minecraft Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<body>
+    <div id="app" class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="main.png" alt="Header" class="sidebar-logo">
+                <h2>MC-Dash</h2>
+            </div>
+            <nav>
+                <a href="#" @click.prevent="currentView='overview'" :class="{ active: currentView === 'overview' }">Overview</a>
+                <a href="#" @click.prevent="currentView='players'" :class="{ active: currentView === 'players' }">Players</a>
+                <a href="#" @click.prevent="currentView='devices'" :class="{ active: currentView === 'devices' }">Devices</a>
+                <a href="#" @click.prevent="currentView='enemies'" :class="{ active: currentView === 'enemies' }">Enemies</a>
+                <a href="#" @click.prevent="currentView='log'" :class="{ active: currentView === 'log' }">Event Log</a>
+                <a href="#" @click.prevent="currentView='console'" :class="{ active: currentView === 'console' }">Console</a>
+                <a href="#" @click.prevent="currentView='chat'" :class="{ active: currentView === 'chat' }">Chat</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <h1>{{ currentView.charAt(0).toUpperCase() + currentView.slice(1) }}</h1>
+                <div class="status-indicator" :class="connectionStatus"></div>
+            </header>
+
+            <!-- Overview Page -->
+            <div v-if="currentView === 'overview'" class="view-content">
+                <div class="stat-cards">
+                    <div class="card"><h3>Players</h3><p>{{ Object.keys(players).length }}</p></div>
+                    <div class="card"><h3>World Time</h3><p>{{ world.time ? world.time.worldTime : 'N/A' }} ({{ world.time ? (world.time.isNight ? 'Night' : 'Day') : 'N/A' }})</p></div>
+                    <div class="card"><h3>Weather</h3><p>{{ world.weather ? world.weather.weather : 'N/A' }}</p></div>
+                </div>
+            </div>
+
+            <!-- Players Page -->
+            <div v-if="currentView === 'players'" class="view-content">
+                <div class="card-grid">
+                    <div class="card player-card" v-for="(player, name) in players" :key="name" :class="{ online: player.online }">
+                        <h3>{{ name }} <span class="status-dot"></span></h3>
+                        <p><strong>Status:</strong> {{ player.online ? 'Online' : 'Offline' }}</p>
+                        <p><strong>Location:</strong> <code>X:{{ player.location.x }}, Y:{{ player.location.y }}, Z:{{ player.location.z }}</code></p>
+                        <div class="player-stats">
+                            <h4>Stats:</h4>
+                            <ul>
+                                <li v-for="(value, key) in player.status">
+                                    <strong>{{ key }}:</strong> {{ value.counter }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="player-commands">
+                            <h4>Commands:</h4>
+                            <button @click="killPlayer(name)">Kill</button>
+                            <input type="text" :id="'tp-coords-' + name" placeholder="x y z">
+                            <button @click="teleportPlayer(name, document.getElementById('tp-coords-' + name).value)">Teleport</button>
+                        </div>
+                        <div class="player-give-items">
+                            <h4>Give Items:</h4>
+                            <button @click="giveItem(name, 'oak_log', 64)">Wood</button>
+                            <button @click="giveItem(name, 'stick', 64)">Sticks</button>
+                            <button @click="giveItem(name, 'cobblestone', 64)">Stone</button>
+                            <button @click="giveItem(name, 'emerald', 16)">Emeralds</button>
+                            <button @click="giveItem(name, 'white_wool', 64)">Wool</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Devices Page -->
+            <div v-if="currentView === 'devices'" class="view-content">
+                <div class="card-grid">
+                     <div class="card device-card" v-for="(device, id) in devices" :key="id" :class="device.status">
+                        <h3>{{ device.type }} <span class="status-dot"></span></h3>
+                        <p><strong>ID:</strong> <code>{{ device.id }}</code></p>
+                        <p><strong>Status:</strong> {{ device.status }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enemies Page -->
+            <div v-if="currentView === 'enemies'" class="view-content">
+                 <div class="card-grid">
+                    <div class="card enemy-card" v-for="(enemy, id) in enemies" :key="id" :class="enemy.status">
+                        <h3>{{ enemy.type }} <span class="status-dot"></span></h3>
+                        <p><strong>ID:</strong> <code>{{ enemy.id }}</code></p>
+                        <p><strong>Status:</strong> {{ enemy.status }}</p>
+                        <p><strong>Location:</strong> <code>X:{{ enemy.location.x }}, Y:{{ enemy.location.y }}, Z:{{ enemy.location.z }}</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Log Page -->
+            <div v-if="currentView === 'log'" class="view-content">
+                <div class="card log-card">
+                    <h3>Live Event Log</h3>
+                    <ul>
+                        <li v-for="log in sortedEventLog">
+                            <span class="log-time">{{ new Date(log.timestamp).toLocaleTimeString() }}</span>
+                            <span class="log-topic">{{ log.topic }}</span>
+                            <span class="log-payload">{{ log.payload }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Console Page -->
+            <div v-if="currentView === 'console'" class="view-content">
+                <div class="card">
+                    <h3>Execute Command</h3>
+                    <div class="console-input">
+                        <input type="text" v-model="commandText" @keyup.enter="sendCommand" placeholder="e.g., say Hello World">
+                        <button @click="sendCommand">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Page -->
+            <div v-if="currentView === 'chat'" class="view-content">
+                <div class="card">
+                    <h3>Live Chat</h3>
+                    <div class="chat-log">
+                        <ul>
+                            <li v-for="msg in chatLog">
+                                <span class="chat-player">{{ msg.playerName }}:</span>
+                                <span class="chat-message">{{ msg.message }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" v-model="chatText" @keyup.enter="sendChatMessage" placeholder="Type a message...">
+                        <button @click="sendChatMessage">Send</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

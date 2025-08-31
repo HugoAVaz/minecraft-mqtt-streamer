@@ -1,0 +1,4 @@
+#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).
+#You also agree that Minecraft is downloaded by the Mojang launcher and that you have read and accepted the terms of the Mojang launcher.
+#Thu Jan 01 00:00:00 UTC 2024
+eula=true

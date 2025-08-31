@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Coreflux MQTT Broker
+  coreflux-mqtt:
+    image: coreflux/coreflux-mqtt-broker:latest
+    container_name: coreflux-mqtt
+    ports:
+      - "1883:1883"      # MQTT
+      - "9001:5000"      # WebSocket
+    environment:
+      - MQTT_PORT=1883
+      - WS_PORT=5000
+      - LOG_LEVEL=INFO
+    volumes:
+      - mqtt_data:/data
+      - mqtt_logs:/logs
+    restart: unless-stopped
+    networks:
+      - minecraft-network
+
+  # Paper Minecraft Server
+  paper-server:
+    image: marctv/minecraft-papermc-server:latest
+    container_name: paper-minecraft
+    ports:
+      - "25565:25565"    # Minecraft server port
+      - "25575:25575"    # RCON port (if needed)
+    environment:
+      - MEMORYSIZE=2G
+      - PAPERMC_FLAGS=--nojline
+    volumes:
+      - minecraft_data:/data
+      - ./plugins:/data/plugins
+      - ./server.properties:/data/server.properties
+      - ./eula.txt:/data/eula.txt
+    depends_on:
+      - coreflux-mqtt
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      - minecraft-network
+
+  # Optional: MQTT Client for testing
+  mqtt-client:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-client
+    command: sh -c "sleep 10 && mosquitto_sub -h coreflux-mqtt -t 'minecraft/#' -v"
+    depends_on:
+      - coreflux-mqtt
+    networks:
+      - minecraft-network
+    profiles:
+      - test
+
+  web-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "8080:80"
+    networks:
+      - minecraft-network
+
+volumes:
+  mqtt_data:
+    driver: local
+  mqtt_logs:
+    driver: local
+  minecraft_data:
+    driver: local
+
+networks:
+  minecraft-network:
+    driver: bridge

@@ -1,0 +1,282 @@
+:root {
+    --bg-primary: #1e2124;
+    --bg-secondary: #282b30;
+    --bg-tertiary: #36393e;
+    --text-primary: #ffffff;
+    --text-secondary: #b9bbbe;
+    --accent-color: #7289da;
+    --success-color: #43b581;
+    --error-color: #f04747;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background-color: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.sidebar-logo {
+    max-width: 80%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 15px 20px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.sidebar nav a:hover, .sidebar nav a.active {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--text-secondary);
+}
+.status-indicator.connected { background-color: var(--success-color); }
+.status-indicator.disconnected { background-color: var(--error-color); }
+
+.view-content {
+    padding: 20px;
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--accent-color);
+}
+
+.card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card li {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+.card li:last-child {
+    border-bottom: none;
+}
+
+pre {
+    background-color: var(--bg-primary);
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Player Card Status */
+.player-card .status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: var(--text-secondary);
+}
+.player-card.online .status-dot { background-color: var(--success-color); }
+.player-card:not(.online) { opacity: 0.6; }
+
+.player-stats, .player-commands {
+    margin-top: 15px;
+}
+.player-commands input {
+    width: calc(100% - 70px);
+    margin-right: 5px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--bg-tertiary);
+    color: var(--text-primary);
+    padding: 5px;
+}
+.player-commands button {
+    background-color: var(--accent-color);
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.player-give-items {
+    margin-top: 10px;
+}
+
+.player-give-items button {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--bg-tertiary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+}
+
+/* Device Card Status */
+.device-card .status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: var(--text-secondary);
+}
+.device-card.burning .status-dot { background-color: #f04747; }
+.device-card.smelting .status-dot { background-color: #faa61a; }
+.device-card.idle .status-dot { background-color: var(--success-color); }
+
+
+/* Enemy Card Status */
+.enemy-card .status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: var(--text-secondary);
+}
+.enemy-card.alive .status-dot { background-color: var(--success-color); }
+.enemy-card.dead .status-dot { background-color: var(--error-color); }
+.enemy-card.dead { opacity: 0.6; }
+
+
+/* Event Log */
+.log-card ul {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.log-time { font-weight: bold; color: var(--accent-color); margin-right: 15px; }
+.log-topic { color: var(--text-secondary); margin-right: 15px; }
+.log-payload { font-family: monospace; }
+
+/* Console */
+.console-input {
+    display: flex;
+}
+
+.console-input input {
+    flex-grow: 1;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--bg-tertiary);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 4px 0 0 4px;
+}
+
+.console-input button {
+    background-color: var(--accent-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Chat */
+.chat-log {
+    height: 60vh;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    border: 1px solid var(--bg-tertiary);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.chat-log ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-player {
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.chat-input {
+    display: flex;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--bg-tertiary);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 4px 0 0 4px;
+}
+
+.chat-input button {
+    background-color: var(--accent-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+}
